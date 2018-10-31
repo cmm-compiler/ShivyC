@@ -6,10 +6,10 @@ import platform
 import subprocess
 import sys
 
-import shivyc.lexer as lexer
+import cmm_compiler.lexer as lexer
 import shivyc.preproc as preproc
 
-from shivyc.errors import error_collector, CompilerError
+from cmm_compiler.errors import error_collector, CompilerError
 from shivyc.parser.parser import parse
 from shivyc.il_gen import ILCode, SymbolTable, Context
 from shivyc.asm_gen import ASMCode, ASMGen
@@ -17,7 +17,6 @@ from shivyc.asm_gen import ASMCode, ASMGen
 
 def main():
     """Run the main compiler script."""
-
     arguments = get_arguments()
 
     objs = []
@@ -39,16 +38,14 @@ def process_file(file, args):
     """Process single file into object file and return the object file name."""
     if file[-2:] == ".c":
         return process_c_file(file, args)
-    elif file[-2:] == ".o":
-        return file
     else:
-        err = f"unknown file type: '{file}'"
+        err = f"unknown file type: '{file}', only .c file as C-like cmm(c-minus-minus) files are supported."
         error_collector.add(CompilerError(err))
         return None
 
 
 def process_c_file(file, args):
-    """Compile a C file into an object file and return the object file name."""
+    """Does Lexical analyses and parse from a C-like cmm(c-minus-minus) file."""
     code = read_file(file)
     if not error_collector.ok():
         return None
@@ -98,21 +95,14 @@ def get_arguments():
     """Get the command-line arguments.
 
     This function sets up the argument parser. Returns a tuple containing
-    an object storing the argument values and a list of the file names
-    provided on command line.
+    a list of the file names provided on command line.
     """
-    desc = """Compile, assemble, and link C files. Option flags starting
-    with `-z` are primarily for debugging or diagnostic purposes."""
+    desc = """Lexical analyses and parser for C-like cmm(c-minus-minus) files."""
     parser = argparse.ArgumentParser(
-        description=desc, usage="cmm [-h] [options] files...")
+        description=desc, usage="main.py [-h] files...")
 
     # Files to compile
     parser.add_argument("files", metavar="files", nargs="+")
-
-    # Boolean flag for whether to print register allocator performance info
-    parser.add_argument("-z-reg-alloc-perf",
-                        help="display register allocator performance info",
-                        dest="show_reg_alloc_perf", action="store_true")
 
     return parser.parse_args()
 
@@ -123,8 +113,8 @@ def read_file(file):
         with open(file) as c_file:
             return c_file.read()
     except IOError as e:
-        descrip = f"could not read file: '{file}'"
-        error_collector.add(CompilerError(descrip))
+        description = f"could not read file: '{file}'"
+        error_collector.add(CompilerError(description))
 
 
 def write_asm(asm_source, asm_filename):

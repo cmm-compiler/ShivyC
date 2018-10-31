@@ -1,7 +1,7 @@
 int program(int a,int b,int c)
 {
 	int i;
-	int j;
+	int j; /*Delicieux*/
 	i=0; 	
 	if(a>(b+c))
 	{
