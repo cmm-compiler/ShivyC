@@ -5,7 +5,7 @@ generates a flat list of tokens present in that input file.
 
 Tokens Supported:
 Keywords: int|void|if|else|while|return
-Identifier: [a-zA-Z]([a-zA-Z]|\d)*
+Identifier: [_a-zA-Z]([_a-zA-Z]|\d)*
 Numbers: [1-9][0-9]*
 Assignment: =
 Calculate Token: +|-|*|/|=|==|>|>=|<|<=|!=
@@ -263,81 +263,6 @@ def match_include_command(tokens):
             tokens[-1].content == "include")
 
 
-def read_string(line, start, delim, null):
-    """Return a lexed string list in input characters.
-
-    Also returns the index of the string end quote.
-
-    line[start] should be the first character after the opening quote of the
-    string to be lexed. This function continues reading characters until
-    an unescaped closing quote is reached. The length returned is the
-    number of input characters that were read, not the length of the
-    string. The latter is the length of the lexed string list.
-
-    The lexed string is a list of integers, where each integer is the
-    ASCII value (between 0 and 128) of the corresponding character in
-    the string. The returned lexed string includes a null-terminator.
-
-    line - List of Tagged objects for each character in the line.
-    start - Index at which to start reading the string.
-    delim - Delimiter with which the string ends, like `"` or `'`
-    null - Whether to add a null-terminator to the returned character list
-    """
-    i = start
-    chars = []
-
-    escapes = {"'": 39,
-               '"': 34,
-               "?": 63,
-               "\\": 92,
-               "a": 7,
-               "b": 8,
-               "f": 12,
-               "n": 10,
-               "r": 13,
-               "t": 9,
-               "v": 11}
-    octdigits = "01234567"
-    hexdigits = "0123456789abcdefABCDEF"
-
-    while True:
-        if i >= len(line):
-            descrip = "missing terminating quote"
-            raise CompilerError(descrip, line[start - 1].r)
-        elif line[i].c == delim:
-            if null: chars.append(0)
-            return chars, i
-        elif (i + 1 < len(line)
-              and line[i].c == "\\"
-              and line[i + 1].c in escapes):
-            chars.append(escapes[line[i + 1].c])
-            i += 2
-        elif (i + 1 < len(line)
-              and line[i].c == "\\"
-              and line[i + 1].c in octdigits):
-            octal = line[i + 1].c
-            i += 2
-            while (i < len(line)
-                   and len(octal) < 3
-                   and line[i].c in octdigits):
-                octal += line[i].c
-                i += 1
-            chars.append(int(octal, 8))
-        elif (i + 2 < len(line)
-              and line[i].c == "\\"
-              and line[i + 1].c == "x"
-              and line[i + 2].c in hexdigits):
-            hexa = line[i + 2].c
-            i += 3
-            while i < len(line) and line[i].c in hexdigits:
-                hexa += line[i].c
-                i += 1
-            chars.append(int(hexa, 16))
-        else:
-            chars.append(ord(line[i].c))
-            i += 1
-
-
 def read_include_filename(line, start):
     """Read a filename that follows a #include directive.
 
@@ -438,7 +363,7 @@ def match_identifier_name(token_repr):
 
     """
     token_str = chunk_to_str(token_repr)
-    if re.match(r"[_a-zA-Z][_a-zA-Z0-9]*$", token_str):
+    if re.match(r"[_a-zA-Z][_a-zA-Z\d]*$", token_str):
         return token_str
     else:
         return None

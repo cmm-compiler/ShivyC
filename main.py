@@ -6,6 +6,7 @@ import platform
 import subprocess
 import sys
 from pprint import pprint
+from prettytable import PrettyTable
 
 import cmm_compiler.lexer as lexer
 
@@ -45,7 +46,15 @@ def process_cmm_file(file, args):
     if not error_collector.ok():
         return None
     
-    pprint([{i: o} for i, o in enumerate(token_list)])
+    # print tokens
+    print_tokens = PrettyTable(["Index", "Token"])
+    #print("Index\tToken")
+    for i, o in enumerate(token_list):
+        print_tokens.add_row([i, o])
+    #    print("{0}\t{1}".format(i, o))
+    print_tokens.align["Token"] = "l"
+    print(print_tokens)
+    #pprint([{i: o} for i, o in enumerate(token_list)])
 
     # If parse() can salvage the input into a parse tree, it may emit an
     # ast_root even when there are errors saved to the error_collector. In this

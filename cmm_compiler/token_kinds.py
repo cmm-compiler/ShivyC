@@ -57,6 +57,3 @@ close_brack = TokenKind("}", symbol_kinds)
 
 identifier = TokenKind()
 number = TokenKind()
-string = TokenKind()
-char_string = TokenKind()
-include_file = TokenKind()
