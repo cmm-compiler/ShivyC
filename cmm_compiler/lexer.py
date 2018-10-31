@@ -62,7 +62,7 @@ def tokenize(code, filename):
             tokens += line_tokens
         except CompilerError as e:
             error_collector.add(e)
-    pprint([{i: o} for i, o in enumerate(tokens)])
+    #pprint([{i: o} for i, o in enumerate(tokens)])
     return tokens
 
 
