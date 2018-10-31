@@ -21,7 +21,6 @@ Numbers: [0-9]
 End Token: #
 """
 import re
-from pprint import pprint
 
 import cmm_compiler.token_kinds as token_kinds
 from cmm_compiler.errors import CompilerError, Position, Range, error_collector
@@ -62,7 +61,7 @@ def tokenize(code, filename):
             tokens += line_tokens
         except CompilerError as e:
             error_collector.add(e)
-    #pprint([{i: o} for i, o in enumerate(tokens)])
+
     return tokens
 
 
