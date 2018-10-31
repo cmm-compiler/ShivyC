@@ -98,7 +98,6 @@ def join_extended_lines(lines):
     lines - List of list of Tagged objects, where each embedded list is a
     separate line in the input program.
     """
-    # TODO: GCC supports \ followed by whitespace. Should ShivyC do this too?
 
     i = 0
     while i < len(lines):
@@ -115,7 +114,6 @@ def join_extended_lines(lines):
 
             # There is no next line to collapse into this one
             else:
-                # TODO: print warning?
                 del lines[i][-1]  # remove trailing backslash
 
         i += 1
@@ -152,7 +150,7 @@ def tokenize_line(line, in_comment):
 
         if in_comment:
             # If next characters end the comment...
-            # if symbol_kind == token_kinds.star and next == token_kinds.slash:
+            # if symbol_kind == token_kinds.star_slash:
             if symbol_kind == token_kinds.star_slash:
                 in_comment = False
                 chunk_start = chunk_end + 2
