@@ -5,8 +5,8 @@ generates a flat list of tokens present in that input file.
 
 Tokens Supported:
 Keywords: int|void|if|else|while|return
-Identifier: [_a-zA-Z]([_a-zA-Z]|\d)*
-Numbers: [1-9][0-9]*
+Identifier: [_a-zA-Z][_a-zA-Z\d]*$
+Numbers: [1-9]\d*
 Assignment: =
 Calculate Token: +|-|*|/|=|==|>|>=|<|<=|!=
 Division Token: ;
